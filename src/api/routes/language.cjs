@@ -54,46 +54,63 @@ router.get('/:id', async function(req, res) {
 /* POST Create new Language. */
 router.post('/', async function(req, res) {
   try{
-    const { languageName, type } = req.params;
+    const projects = await pool.query('SELECT id, project_name, owner FROM Projects ORDER BY id')
+    console.log(projects.rows[0])
 
-  // Validação de dados
-    if( !languageName || !type){
-      // Res Status Bad Request
-      return res.status(400).json({
-        success: false,
-        message:'Nome da linguagem e tipo necessários para o cadastro'
-      });
-    }
+    const languageRequests = projects.rows.map(project => {
+      const apiPromise = github.get(`/repos/${project.owner}/${project.project_name}/languages`)
+
+       .catch(err => {
+          console.log(`Ignorando ${project.owner}/${project.project_name}: ${err.response?.status}`);
+          return { data: [] }; // Evita que o erro de um projeto pare tudo
+        });
+
+      return {
+        projectId: project.id,
+        request: apiPromise 
+      };
+    });
+      
+
+    const results = await Promise.all(languageRequests.map(c => c.request));
+    const cadastrados =[]
+    console.log(results)
+    const languages = []
+
+    for (let i = 0; i < results.length; i++){
+      const projectId = languageRequests[i].projectId
+      const languagesData = results[i].data
     
-    //Validação de existencia
-    const existingLanguage = await pool.query('SELECT id FROM Languages WHERE languageName = $1 AND type = $2', [languageName, type]);
-    if(existingLanguage.rows.length>0){
-      return res.status(409).json({
-        success: false,
-        message: 'Linguagem já existe'
-      });
+     for (const [language_name, bytes] of Object.entries(languagesData)){
+        let languageId;
+
+        //Validação de existencia
+        const existingLanguage = await pool.query('SELECT id FROM Languages WHERE language_name =$1', [language_name]);
+        if(existingLanguage.rows.length===0){
+          //Insert
+          const insertLanguages = await pool.query('INSERT INTO Languages(language_name, type) Values($1, $2) ON CONFLICT (language_name) DO UPDATE SET language_name = EXCLUDED.language_name RETURNING id', [language_name, 'Placeholder']);
+
+          languageId = insertLanguages.rows[0].id
+          cadastrados.push(insertLanguages.rows[0]);
+        }
+        
+        else {
+          languageId = existingLanguage.rows[0].id;
+        }
+        await pool.query('INSERT INTO ProjectsLanguages(bytes, project_id, language_id) Values($1, $2, $3) ON CONFLICT DO NOTHING RETURNING id, bytes, project_id, language_id', [bytes, projectId, languageId])
+      }
+        
     }
-
-    //Insert
-    const result = await pool.query('INSERT INTO Languages(languageName, type) Values($1, $2) RETURNING id, languageName, type', [languageName, type]);
-
     // http status 201 - Created
     res.status(201).json({
       success: true,
-      message:'Linguagem cadastrada com sucesso',
-      data: result.rows[0]
+      message:`${cadastrados.length} Projetos cadastrados com sucesso`,
+      data: cadastrados
     });
   }
 
     catch (error) {
-      console.error('Erro ao cadastrar a linguagem:', error);
-
-      if (error.code === '23514'){
-        return res.status(400).json({
-          success: false,
-          message: 'Dados inválidos. Verifique os campos e tente novamente.'
-        });
-      }
+      console.error('Erro ao cadastrar o projeto:', error);
 
       // http status 500 - Internal Server Error
       res.status(500).json({

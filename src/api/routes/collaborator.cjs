@@ -46,41 +46,59 @@ router.get('/:id', async function(req, res) {
 /* POST Create new Collaborators. */
 router.post('/', async function(req, res) {
   try{
-    const projects = await pool.query('SELECT projectName FROM Projects ORDER BY id')
+    const projects = await pool.query('SELECT id, project_name, owner FROM Projects ORDER BY id')
+    console.log(projects.rows[0])
 
-    const contributorRequests = projects.rows.map(project => github.get(`/user/repos/${project.projectName}/contributors`)
-    );
+    const contributorRequests = projects.rows.map(project => {
+      const apiPromise = github.get(`/repos/${project.owner}/${project.project_name}/contributors`)
 
-    const results = await Promise.all(contributorRequests);
+       .catch(err => {
+          console.log(`Ignorando ${project.owner}/${project.project_name}: ${err.response?.status}`);
+          return { data: [] }; // Evita que o erro de um projeto pare tudo
+        });
+
+      return {
+        projectId: project.id,
+        request: apiPromise 
+      };
+    });
+      
+
+    const results = await Promise.all(contributorRequests.map(c => c.request));
+    const cadastrados =[]
+    console.log(results)
     const contributors = []
 
-    for (const response of results){
-      // O axios coloca o corpo da resposta em .data
-      // Usamos o spread operator (...) para inserir os itens individualmente
-      contributors.push(...response.data)
-    }
-    const cadastrados =[]
-    for (const contributor of contributors){
-      
-      // Validação de dados
-      if( !contributor.login || !contributor.html_url || !contributor.avatar_url){
+    for (let i = 0; i < results.length; i++){
+      const projectId = contributorRequests[i].projectId
+      const contributorsData = results[i].data
+    
+      for (const contributor of contributorsData){
+        let contributorId;
+        
+        //Validação de existencia
+        const existingContributor = await pool.query('SELECT id FROM Collaborators WHERE user_name =$1 AND user_link = $2', [contributor.login, contributor.html_url]);
+        if(existingContributor.rows.length===0){
+          //Insert
+          const insertCollab = await pool.query('INSERT INTO Collaborators(user_name, user_link, user_avatar) Values($1, $2, $3) RETURNING id, user_name, user_link, user_avatar', [contributor.login, contributor.html_url, contributor.avatar_url]);
 
+          contributorId = insertCollab.rows[0].id
+          cadastrados.push(insertCollab.rows[0]);
+        }
+        
+        else {
+            contributorId = existingContributor.rows[0].id;
+        }
+        await pool.query('INSERT INTO ProjectsCollaborators(project_id, collaborator_id) Values($1, $2) ON CONFLICT DO NOTHING RETURNING id, project_id, collaborator_id ', [projectId, contributorId])
       }
-      
-      //Validação de existencia
-      const existingContributor = await pool.query('SELECT id FROM Collaborators WHERE userName =$1 AND userlink = $2', [contributor.login, contributor.html_url]);
-      if(existingContributor.rows.length===0){
-        //Insert
-        const result = await pool.query('INSERT INTO Collaborators(userName, userLink, userAvatar) Values($1, $2, $3) RETURNING id, userName, userLink, userAvatar', [contributor.login, contributor.html_url, contributor.avatar_url]);
-      }
-      cadastrados.push(result.rows[0]);
+        
     }
     // http status 201 - Created
-      res.status(201).json({
-        success: true,
-        message:`${cadastrados.length} Colaboradores cadastrados com sucesso`,
-        data: cadastrados
-      });
+    res.status(201).json({
+      success: true,
+      message:`${cadastrados.length} Colaboradores cadastrados com sucesso`,
+      data: cadastrados
+    });
   }
 
     catch (error) {
@@ -94,18 +112,18 @@ router.post('/', async function(req, res) {
     }
 });
 
-/* PUT - Atualizar Coçaborador */
+/* PUT - Atualizar Colaborador */
 router.put('/:id', async function(req, res) {
   try {
     const { id } = req.params;
-    const { userName, userLink, userAvatar } = req.body;
+    const { user_name, user_link, user_avatar } = req.body;
     
     // Validação básica
-    if (!userName  || !userLink || !userAvatar) {
+    if (!user_name  || !user_link || !user_avatar) {
       // http status 400 - Bad Request
       return res.status(400).json({
         success: false,
-        message: 'Nome de colaborador, link do github e userAvatar são obrigatórios'
+        message: 'Nome de colaborador, link do github e user_avatar são obrigatórios'
       });
     }
     
@@ -120,8 +138,8 @@ router.put('/:id', async function(req, res) {
     }
     
     let query, params;    
-    query = 'UPDATE Collaborators SET userName = $1, userLink = $2, userAvatar = $3 WHERE id = $4 RETURNING id, userName, userLink, userAvatar';
-    params = [userName, userLink, userAvatar, id];    
+    query = 'UPDATE Collaborators SET user_name = $1, user_link = $2, user_avatar = $3 WHERE id = $4 RETURNING id, user_name, user_link, user_avatar';
+    params = [user_name, user_link, user_avatar, id];    
     const result = await pool.query(query, params);
     
     res.json({

@@ -12,29 +12,33 @@ DROP TABLE IF EXISTS Projects;
 
 CREATE TABLE Projects (
   id BIGINT GENERATED ALWAYS AS IDENTITY,
-  projectName TEXT NOT NULL,
+  project_name TEXT NOT NULL,
+  display_name TEXT,           
+  owner TEXT NOT NULL DEFAULT 'Asafesseidon', 
   link TEXT NOT NULL,
-  creationDate TIMESTAMP,
+  creation_date TIMESTAMP,
   description TEXT,
-    CONSTRAINT pk_project PRIMARY KEY (id)
+  is_private BOOLEAN DEFAULT false,   -- Útil para o filtro que você queria!
+  github_id BIGINT UNIQUE, 
+  CONSTRAINT pk_project PRIMARY KEY (id)
 );
 
 
 CREATE TABLE Languages (
   id BIGINT GENERATED ALWAYS AS IDENTITY,
-  languageName TEXT NOT NULL,
+  language_name TEXT NOT NULL,
   type TEXT NOT NULL,
   CONSTRAINT pk_language PRIMARY KEY (id),
-  CONSTRAINT unique_language_name UNIQUE (languageName)
+  CONSTRAINT unique_language_name UNIQUE (language_name)
 );
 
 CREATE TABLE Collaborators (
   id BIGINT GENERATED ALWAYS AS IDENTITY,
-  userName TEXT NOT NULL,
-  userLink TEXT NOT NULL, 
-  userAvatar TEXT NOT NULL,
+  user_name TEXT NOT NULL,
+  user_link TEXT NOT NULL, 
+  user_avatar TEXT NOT NULL,
   CONSTRAINT pk_collaborator PRIMARY KEY (id),
-  CONSTRAINT unique_user UNIQUE (userName, userLink)
+  CONSTRAINT unique_user UNIQUE (user_name, user_link)
 );
 
 CREATE TABLE ProjectsLanguages (
