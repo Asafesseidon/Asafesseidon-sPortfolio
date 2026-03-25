@@ -1,20 +1,32 @@
 <script lang="ts">
 
 import Nav from './Components/Nav.svelte';
-import Project from './Components/project.svelte';
+import ProjectSv from './Components/project.svelte';
+ 
+  type Language = {
+    language_name: string;
+    type: string;
+    bytes: number;
+  }
 
- var frontEndprojects= [
-  {projectPath:"https://asafesseidon.github.io/DoctorCare/" , projectImgSrc:"https://asafesseidon.github.io/Asafesseidon-s_Website/Files/Images/Captura%20de%20Tela%20(183).png" , projectTitle:"DoctorCare" , projectDescription:"A site made in the programming event NLW Return, it's a site made to ease people access to proper health care." , svgSources:["HTML", "CSS","JS"]},
-  {projectPath:"https://asafesseidon.github.io/MKJ-Enterprises/" , projectImgSrc:"https://asafesseidon.github.io/Asafesseidon-s_Website/Files/Images/Captura%20de%20Tela%20(184).png" , projectTitle:"MKJ Enterprises" , projectDescription:"A collaborative site i made with two other people, João Gabriel Pereira Lopes and Erick de Castro, about an Enterprise that has two subsidiaries one which works with a luthier work and other which works with cealing lowering" , svgSources:["HTML", "CSS","JS"]},
-  {projectPath:"#", projectImgSrc:"https://asafesseidon.github.io/Asafesseidon-s_Website/Files/Images/Captura%20de%20Tela%20(185).png" , projectTitle:"Hash Game" , projectDescription: "A simple hash game made with HTML, CSS and Javascript.", svgSources:["HTML", "CSS","JS"]},
-  {projectPath:"https://github.com/Asafesseidon/BinarySteam" , projectImgSrc:"#" , projectTitle:"BinarySteam" , projectDescription:"A simple site about selling games, that i helped create alongside João Gabriel Pereira Lopes" , svgSources:["HTML", "CSS","JS","NODE","SQLite"]},
-  {projectPath:"https://github.com/JoaoGabrielPereiraLopes/Wefood" , projectImgSrc:"#" , projectTitle:"WeFood" , projectDescription: "A dynamic site detailing the menu of a restaurant, that i helped with the creation alongside João Gabriel Pereira Lopes.", svgSources:["HTML", "CSS","JS","NODE","SQLite"]},
- ];
- var backEndprojects= [
-  {projectPath:"https://github.com/Asafesseidon/RocketseatAuctionAPI"  , projectTitle:"RocketseatAuctionAPI" , projectDescription:"A C# API that realizes and organizes auctions with automated bidding based on the maximum value the participants want to bid, it was made with an SQLite database." , svgSources:["C#","SQLite"]},
-  {projectPath:"https://github.com/Asafesseidon/PassInAPI"  , projectTitle:"PassInAPI" , projectDescription:"A C# API that organizes events, made using the SQLite database." , svgSources:["C#","SQLite"]},
- ];
+  type Collaborator = {
+    user_name: string;
+    user_link: string;
+    user_avatar: string;
+  }
 
+  type Project = {
+    id: number;
+    project_name: string;
+    display_name: string;
+    owner: string;
+    link: string;
+    creation_date: string;
+    description: string;
+    collaborators: Collaborator[];
+    languages: Language[];
+  };
+  
  function textHack(){
 
  }
@@ -95,7 +107,7 @@ import Project from './Components/project.svelte';
             <h2 class="text-white items-center justify-center text-center text-4xl my-3">FrontEnd</h2>
 
             {#each frontEndprojects as fEproject}
-              <Project {...fEproject}/>
+              <ProjectSv {...fEproject}/>
             {/each}
            <!-- <a href="https://asafesseidon.github.io/DoctorCare/" class="flex flex-col items-center bg-white border border-gray-200 rounded-lg shadow-sm md:flex-row hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700">
 				      <img class="object-cover w-full rounded-t-lg h-96 md:h-auto md:w-48 md:rounded-none md:rounded-s-lg" src="https://asafesseidon.github.io/Asafesseidon-s_Website/Files/Images/Captura%20de%20Tela%20(183).png" alt="">
@@ -147,7 +159,7 @@ import Project from './Components/project.svelte';
         <h2 class="text-white items-center justify-center text-center text-4xl my-3">BackEnd</h2>
 
         {#each backEndprojects as bEproject}
-          <Project {...bEproject}/>
+          <ProjectSv {...bEproject}/>
         {/each}
         <!--
         <a href="https://github.com/Asafesseidon/RocketseatAuctionAPI" class="flex flex-col items-center bg-white border border-gray-200 rounded-lg shadow-sm md:flex-row  hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700">
