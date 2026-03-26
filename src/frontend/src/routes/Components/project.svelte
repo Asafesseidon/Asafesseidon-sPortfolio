@@ -1,6 +1,9 @@
 <script lang="ts">
       export let link= "";
       export let project_name= "";
+      export let display_name= "".
+      export let owner="";
+      export let creation_date = "";
       export let description= "";
       export let languages= [];
       export let collaborators = []
@@ -37,7 +40,7 @@
                         return "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/markdown/markdown-original.svg";
             }
       } 
-          
+
 </script>
 
 <style>
