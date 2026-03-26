@@ -1,18 +1,20 @@
 <script lang="ts">
 
-import Nav from './Components/Nav.svelte';
-import ProjectSv from './Components/project.svelte';
- 
+  import Nav from './Components/Nav.svelte';
+  import ProjectSv from './Components/project.svelte';
+  import api from '../lib/api.ts';
+  import { onMount } from 'svelte';
+  
   type Language = {
-    language_name: string;
+    name: string;
     type: string;
     bytes: number;
   }
 
   type Collaborator = {
-    user_name: string;
-    user_link: string;
-    user_avatar: string;
+    name: string;
+    link: string;
+    avatar: string;
   }
 
   type Project = {
@@ -26,10 +28,27 @@ import ProjectSv from './Components/project.svelte';
     collaborators: Collaborator[];
     languages: Language[];
   };
-  
- function textHack(){
 
- }
+  let projects: Project[] = [];
+  let loading = true;
+  let error = '';
+
+  onMount(async () => {
+    try {
+      const res = await api.get('/project');
+      projects = res.data.data;
+    } catch (e: any) {
+      error = e.response?.data?.message || 'Erro ao carregar turmas';
+    } finally {
+      loading = false;
+    }
+  });
+
+  
+
+  function textHack(){
+
+ };
 
 </script>
 
@@ -106,94 +125,17 @@ import ProjectSv from './Components/project.svelte';
           <div class="flex flex-col items-center bg-white border border-gray-200 rounded-lg shadow-sm   dark:border-gray-700 dark:bg-gray-900">
             <h2 class="text-white items-center justify-center text-center text-4xl my-3">FrontEnd</h2>
 
-            {#each frontEndprojects as fEproject}
-              <ProjectSv {...fEproject}/>
+            {#each projects as project}
+              <ProjectSv {...project}/>
             {/each}
-           <!-- <a href="https://asafesseidon.github.io/DoctorCare/" class="flex flex-col items-center bg-white border border-gray-200 rounded-lg shadow-sm md:flex-row hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700">
-				      <img class="object-cover w-full rounded-t-lg h-96 md:h-auto md:w-48 md:rounded-none md:rounded-s-lg" src="https://asafesseidon.github.io/Asafesseidon-s_Website/Files/Images/Captura%20de%20Tela%20(183).png" alt="">
-				      <div class="flex flex-col justify-between p-4 leading-normal">
-					      <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">DoctorCare</h5>
-					      <p class="mb-3 font-normal text-gray-700 dark:text-gray-400">A site made in the programming event NLW Return, it's a site made to ease people access to proper health care.</p>
-                <div class="flex flex-row">
-                  <img src="https://icongr.am/devicon/html5-original.svg?size=128&color=currentColor" class="svgTechnologies" alt="">
-                  <img class="svgTechnologies " src="https://icongr.am/devicon/css3-original.svg?size=128&color=currentColor" alt="">
-                  <img class="svgTechnologies " src="https://icongr.am/devicon/javascript-original.svg?size=128&color=currentColor" alt="">
-                </div>
-				      </div>
-			      </a>
-  
-			   <a href="https://asafesseidon.github.io/MKJ-Enterprises/" class="flex flex-col items-center bg-white border border-gray-200 rounded-lg shadow-sm md:flex-row  hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700">
-				  <img class="object-cover w-full rounded-t-lg h-96 md:h-auto md:w-48 md:rounded-none md:rounded-s-lg" src="https://asafesseidon.github.io/Asafesseidon-s_Website/Files/Images/Captura%20de%20Tela%20(184).png" alt="">
-				  <div class="flex flex-col justify-between p-4 leading-normal">
-					  <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">MKJ Enterprises</h5>
-					  <p class="mb-3 font-normal text-gray-700 dark:text-gray-400">A collaborative site i made with two other people, João Gabriel Pereira Lopes and Erick de Castro, about an Enterprise that has two subsidiaries
-               one which works with a luthier work and other which works with cealing lowering.</p>
-            <div class="flex flex-row">
-              <img src="https://icongr.am/devicon/html5-original.svg?size=128&color=currentColor" class="svgTechnologies" alt="">
-              <img class="svgTechnologies " src="https://icongr.am/devicon/css3-original.svg?size=128&color=currentColor" alt="">
-            </div>
-            
-				  </div>
-			  </a>
-  
-			   <a href="#" class="flex flex-col items-center bg-white border border-gray-200 rounded-lg shadow-sm md:flex-row  hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700">
-				  <img class="object-cover w-full rounded-t-lg h-96 md:h-auto md:w-48 md:rounded-none md:rounded-s-lg" src="https://asafesseidon.github.io/Asafesseidon-s_Website/Files/Images/Captura%20de%20Tela%20(185).png" alt="">
-				  <div class="flex flex-col justify-between p-4 leading-normal">
-					  <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Hash Game</h5>
-					  <p class="mb-3 font-normal text-gray-700 dark:text-gray-400">Some quick example text to build on the card title and make up the bulk of the card's content. Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptas, suscipit. Modi consequuntur voluptates sapiente facere est eligendi repudiandae assumenda sint, harum vero soluta amet repellat tenetur ut, nemo molestias vitae!</p>
-            <div class="flex flex-row">
-              <img src="https://icongr.am/devicon/html5-original.svg?size=128&color=currentColor" class="svgTechnologies" alt="">
-              <img class="svgTechnologies " src="https://icongr.am/devicon/css3-original.svg?size=128&color=currentColor" alt="">
-              <img class="svgTechnologies " src="https://icongr.am/devicon/javascript-original.svg?size=128&color=currentColor" alt="">
-            </div>
           </div>
-			  </a>
-        -->
+	      </div>
       </div>
-  
-	  </div>
-  
-	 <div class="flex-row items-center justify-center mx-2.5">
-
-        <div class="flex flex-col items-center bg-white border border-gray-200 rounded-lg shadow-sm   dark:border-gray-700 dark:bg-gray-900">
-        <h2 class="text-white items-center justify-center text-center text-4xl my-3">BackEnd</h2>
-
-        {#each backEndprojects as bEproject}
-          <ProjectSv {...bEproject}/>
-        {/each}
-        <!--
-        <a href="https://github.com/Asafesseidon/RocketseatAuctionAPI" class="flex flex-col items-center bg-white border border-gray-200 rounded-lg shadow-sm md:flex-row  hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700">
-				 
-				  <div class="flex flex-col justify-between p-4 leading-normal">
-					  <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">RocketseatAuctionAPI</h5>
-					  <p class="mb-3 font-normal text-gray-700 dark:text-gray-400">A C# API that realizes and organizes auctions with automated bidding based on the maximum value the participants want to bid, it was made with an SQLite database.</p>
-            <div class="flex flex-row">
-              <img src="https://icongr.am/devicon/csharp-original.svg?size=128&color=currentColor" class="svgTechnologies" alt="">
-            </div>
-				  </div>
-			  </a>
-  
-			   <a href="https://github.com/Asafesseidon/PassInAPI" class="flex flex-col items-center bg-white border border-gray-200 rounded-lg shadow-sm md:flex-row  hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700">
-				  
-				  <div class="flex flex-col justify-between p-4 leading-normal">
-					  <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">PassInAPI</h5>
-					  <p class="mb-3 font-normal text-gray-700 dark:text-gray-400">A C# API that organizes events, made using the SQLite database.</p>
-            <div class="flex flex-row">
-              <img src="https://icongr.am/devicon/csharp-original.svg?size=128&color=currentColor" class="svgTechnologies" alt="">
-            </div>
-				  </div>
-			  </a>
-        -->
-      </div>
-			  
-	 </div>
-     </div>
-    
-   </div>
 	 
   
-	 <div>
-	   <h2 class="text-white">Random Projects</h2>
-	 </div>
+     <div>
+       <h2 class="text-white">Random Projects</h2>
+     </div>
   
-  </div>
+   </div>
+</div>
