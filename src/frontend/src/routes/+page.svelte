@@ -134,7 +134,7 @@
 	 
   
      <div>
-       <h2 class="text-white">Random Projects</h2>
+       <h2 class="text-white">Fun Analytics</h2>
      </div>
   
    </div>
