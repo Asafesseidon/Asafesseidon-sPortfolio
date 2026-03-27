@@ -48,8 +48,6 @@
     }
   });
 
-  
-
   function textHack(){
 
  };
@@ -66,12 +64,6 @@
       width:18.7vw;
       height:40vw;
     }
-
-    .svgTechnologies{
-      width:5vw;
-      height:2.5vw;
-    }
-
     .midnightBlue{
      color: #2D386C;
     }
