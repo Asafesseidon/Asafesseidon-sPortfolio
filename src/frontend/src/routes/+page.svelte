@@ -78,6 +78,10 @@
     }
 
   </style>
+<svelte:head>
+  <title>Asafesseidon's Portfolio</title>
+</svelte:head>
+
   <div class="justify-center flex-row items-center bg-slate-950 mx-0 mt-0 pt-7">
 	  <div class="mx-20 grid [grid-template-columns:1fr]">
       <div class="[grid-column:1] [grid-row:1] relative">
