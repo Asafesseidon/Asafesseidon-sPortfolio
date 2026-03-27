@@ -9,6 +9,7 @@ require('dotenv').config();
 console.log('--- TESTE DE AMBIENTE ---');
 console.log('TOKEN:', process.env.GITHUB_TOKEN ? 'OK' : 'VAZIO');
 console.log('USER:', process.env.GITHUB_USERNAME ? 'OK' : 'VAZIO');
+console.log('Test:', process.env.ASAFE_ASA ? 'OK' : 'VAZIO');
 
 var indexRouter = require('./routes/index.cjs');
 var collaboratorRouter = require('./routes/collaborator.cjs');
@@ -20,7 +21,23 @@ var app = express();
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
-app.use(cors())
+app.use(cors({
+  origin: function (origin, callback) {
+    if (!origin) return callback(null, true);
+
+    const isLocalhost =
+      origin.startsWith('http://localhost:517') ||
+      origin.startsWith('http://127.0.0.1:517');
+
+    if (isLocalhost) {
+      return callback(null, true);
+    }
+
+    return callback(new Error('Not allowed by CORS'));
+  },
+  credentials: true
+}));
+
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));

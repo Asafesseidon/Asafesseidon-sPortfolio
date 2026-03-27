@@ -1,12 +1,14 @@
 <script lang="ts">
+      import { Popover } from 'flowbite-svelte';
+
       export let link= "";
       export let project_name= "";
-      export let display_name= "".
-      export let owner="";
+      export let display_name= "";
+      export let owner= "";
       export let creation_date = "";
       export let description= "";
       export let languages= [];
-      export let collaborators = []
+      export let collaborators = [];
 
       function svgSorter(name){
             switch (name) {
@@ -51,10 +53,12 @@
     }
 
 </style>
-      <a href={link} class="flex flex-col items-center bg-white border border-gray-200 rounded-lg shadow-sm md:flex-row hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700">
+      <a href={link} class="flex flex-col w-full items-center bg-white border border-gray-200 rounded-lg shadow-sm md:flex-row hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700">
             <div class="flex flex-col justify-between p-4 leading-normal">
-                  <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">{project_name}</h5>
+                  <h5 class="mb-2 text-2xl items-center justify-center font-bold tracking-tight text-gray-900 dark:text-white">{project_name}</h5>
                   <p class="mb-3 font-normal text-gray-700 dark:text-gray-400 w-full">{description}</p>
+                   <p class="mb-3 font-normal text-gray-700 dark:text-gray-400 w-full">Created at {creation_date}</p>
+                  <p class="mb-3 font-normal text-gray-700 dark:text-gray-400 w-full">By {owner}</p>
                   <div class="flex flex-row">
 
                         <h3 class="font-medium text-heading">Languages</h3>       
@@ -65,19 +69,41 @@
                   <div class="flex flex-row">
                         <h3 class="font-medium text-heading">Collaborators</h3>
                         {#each collaborators as collaborator}
-                                          
-                              <button data-popover-target="popover-default" type="button" class="bg-brand box-border border border-transparent hover:bg-brand-strong focus:ring-4 focus:ring-brand-medium shadow-xs font-medium leading-5 rounded-base text-sm px-4 py-2.5 focus:outline-none"><img class="w-8 h-8 rounded-full" src={collaborator.avatar} alt=""></button>
+                                <Popover>
+                                    <!-- Trigger (your button with avatar) -->
+                                    <button
+                                    slot="trigger"
+                                    type="button"
+                                    class="bg-brand border border-transparent hover:bg-brand-strong shadow-xs font-medium leading-5 rounded-base text-sm px-4 py-2.5"
+                                    >
+                                    <img
+                                          class="w-8 h-8 rounded-full hover:scale-110 border hover:border-sky-700 duration-300"
+                                          src={collaborator.avatar}
+                                          alt={collaborator.name}
+                                          loading="lazy"
+                                    />
+                                    </button>
 
-                              <div data-popover id="popover-default" role="tooltip" class="absolute z-10 invisible inline-block w-64 text-sm text-body transition-opacity duration-300 bg-neutral-primary-soft border border-default rounded-base shadow-xs opacity-0">
-                              <div class="px-3 py-2 bg-neutral-tertiary border-b border-default rounded-t-base">
-                                    <h3 class="font-medium text-heading">{collaborator.name}</h3>
-                              </div>
-                              <div class="px-3 py-2">
-                                    <a href={collaborator.link}>Github Profile of {collaborator.name}</>
-                              </div>
-                              <div data-popper-arrow></div>
-                              </div>
+                                    <!-- Popover content -->
+                                    <div class="w-64 text-sm text-body bg-neutral-primary-soft border border-default rounded-base shadow-xs">
+                                    <div class="px-3 py-2 bg-neutral-tertiary border-b border-default rounded-t-base">
+                                          <h3 class="font-medium text-heading">
+                                          {collaborator.name}
+                                          </h3>
+                                    </div>
 
+                                    <div class="px-3 py-2">
+                                          <a
+                                          href={collaborator.link}
+                                          target="_blank"
+                                          rel="noopener noreferrer"
+                                          class="text-blue-500 hover:underline"
+                                          >
+                                          Github Profile of {collaborator.name}
+                                          </a>
+                                    </div>
+                                    </div>
+                              </Popover>
                         {/each}
                   </div>
             </div>

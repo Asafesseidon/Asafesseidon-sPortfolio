@@ -35,10 +35,14 @@
 
   onMount(async () => {
     try {
-      const res = await api.get('/project');
+      console.log('Hydration')
+      const res = await api.get('/projects');
+      console.log('calling')
       projects = res.data.data;
+      console.log(projects)
     } catch (e: any) {
       error = e.response?.data?.message || 'Erro ao carregar turmas';
+
     } finally {
       loading = false;
     }
@@ -85,12 +89,8 @@
   <div class="justify-center flex-row items-center bg-slate-950 mx-0 mt-0 pt-7">
 	  <div class="mx-20 grid [grid-template-columns:1fr]">
       <div class="[grid-column:1] [grid-row:1] relative">
-        
-        <img src="https://asafesseidon.github.io/Asafesseidon-s_Website/Files/Images/anne-sophie-benoit-JaNtL4uGvG8-unsplash.jpg" alt="Imagem" class="rounded-4xl bannerImg  duration-300 ease-in-out hover:scale-110 mb-7 object-cover place-self-center mx-10 bg-[repeating-linear-gradient(to_bottom,rgba(rgba(45, 56, 108, 0.7))_0_10px,rgba(rgba(45, 56, 108, 0.3))_10px_20px)]"/>
-        
-        <!--
-        <div class="bg-[url('https://asafesseidon.github.io/Asafesseidon-s_Website/Files/Images/anne-sophie-benoit-JaNtL4uGvG8-unsplash.jpg'),repeating-linear-gradient(to_bottom,rgba(rgba(45, 56, 108, 0.7))_0_10px,rgba(rgba(45, 56, 108, 0.3))_10px_20px)] bg-cover bg-center bg-blend-overlay bannerImg rounded-4xl duration-300 ease-in-out hover:scale-110 mb-7"></div>
-        -->
+       
+          <img src="https://asafesseidon.github.io/Asafesseidon-s_Website/Files/Images/anne-sophie-benoit-JaNtL4uGvG8-unsplash.jpg" alt="Imagem" class="rounded-4xl bannerImg  duration-300 ease-in-out hover:scale-110 mb-7 object-cover place-self-center mx-10"/>
       </div>
       
       <div class=" [grid-column:1] [grid-row:1] place-self-center text-2xl text-sky-700 md:bottom-[35rem] md:left-[40%]  left-24 overflow-hidden  text-7xl z-21">
@@ -123,7 +123,7 @@
      <div class="flex flex-row">
         <div class="flex-row items-center justify-center mx-2.5">
           <div class="flex flex-col items-center bg-white border border-gray-200 rounded-lg shadow-sm   dark:border-gray-700 dark:bg-gray-900">
-            <h2 class="text-white items-center justify-center text-center text-4xl my-3">FrontEnd</h2>
+            <h2 class="text-white items-center justify-center text-center text-4xl my-3">Projects from Github</h2>
 
             {#each projects as project}
               <ProjectSv {...project}/>
