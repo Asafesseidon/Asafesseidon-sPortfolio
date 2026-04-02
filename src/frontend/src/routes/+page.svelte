@@ -2,6 +2,7 @@
 
   import Nav from './Components/Nav.svelte';
   import ProjectSv from './Components/project.svelte';
+  import CardSv from './Components/cards.svelte';
   import api from '../lib/api.ts';
   import { onMount } from 'svelte';
   
@@ -32,6 +33,7 @@
   let projects: Project[] = [];
   let loading = true;
   let error = '';
+  const letters ="ABCDEFGHIJKLMNOPQRSTUVWXYZ-"
 
   onMount(async () => {
     try {
@@ -48,22 +50,48 @@
     }
   });
 
-  function textHack(){
+  function hackerEffect(node: HTMLElement) {
+    const originalText = node.innerText;
+    let interval: number;
 
- };
+    const startEffect = () => {
+        let iterations = 0;
+        clearInterval(interval);
+
+        interval = setInterval(() => {
+            node.innerText = node.innerText
+                .split("")
+                .map((_, index) => {
+                    if (index < iterations) {
+                        return originalText[index];
+                    }
+                    return letters[Math.floor(Math.random() * 26)];
+                })
+                .join("");
+
+            if (iterations >= originalText.length) {
+                clearInterval(interval);
+            }
+
+            iterations += 1 / 3;
+        }, 45);
+    };
+
+    node.addEventListener("mouseenter", startEffect);
+
+    return {
+        destroy() {
+            node.removeEventListener("mouseenter", startEffect);
+            clearInterval(interval);
+        }
+    };
+  }
+
 
 </script>
 
   <style>
 
-    .bannerImg{
-      width:70vw;
-      height:40vw;
-    }
-    .cardImgs{
-      width:18.7vw;
-      height:40vw;
-    }
     .midnightBlue{
      color: #2D386C;
     }
@@ -82,39 +110,88 @@
   <title>Asafesseidon's Portfolio</title>
 </svelte:head>
 
-  <div class="justify-center flex-row items-center bg-slate-950 mx-0 mt-0 pt-7">
+{#if loading}
+  <div class="justify-center flex-row items-center bg-slate-950 h-screen mx-0 mt-0 pt-7">
 	  <div class="mx-20 grid [grid-template-columns:1fr]">
-      <div class="[grid-column:1] [grid-row:1] relative">
-       
-          <img src="https://asafesseidon.github.io/Asafesseidon-s_Website/Files/Images/anne-sophie-benoit-JaNtL4uGvG8-unsplash.jpg" alt="Imagem" class="rounded-4xl bannerImg  duration-300 ease-in-out hover:scale-110 mb-7 object-cover place-self-center mx-10"/>
+      <div class="[grid-column:1] [grid-row:1] relative group overflow-hidden rounded-3xl mb-7 mx-auto w-fit rounded-4xl duration-500 ease-in-out hover:scale-110">
+        
+        <img 
+          src="https://asafesseidon.github.io/Asafesseidon-s_Website/Files/Images/anne-sophie-benoit-JaNtL4uGvG8-unsplash.jpg" 
+          alt="Imagem" 
+          class="rounded-4xl duration-300 ease-in-out hover:scale-110 object-cover aspect-video w-[70vw] h-[40-vw] block border-4 border-blue-700 "
+        />
+
+        <div class="absolute inset-0 pointer-events-none z-10 
+                    bg-[linear-gradient(rgba(160,130,255,0)_50%,rgba(0,0,200,0.4)_50%)] 
+                    bg-[length:100%_8px] opacity-60 ">
+        </div>
       </div>
       
-      <div class=" [grid-column:1] [grid-row:1] place-self-center text-2xl text-sky-700 md:bottom-[35rem] md:left-[40%]  left-24 overflow-hidden  text-7xl z-21">
-        <h1 >ASAFESSEIDON-SAPPHIRE</h1>
+      <div class="[grid-column:1] [grid-row:1] place-self-center pointer-events-none z-20">
+        <h1 use:hackerEffect class="text-2xl md:text-7xl text-blue-900 drop-shadow-lg pointer-events-auto">
+          LOADING PORTOFOLIO
+        </h1>
       </div>
     </div>
+  </div>
+{:else}
+  <div class="justify-center flex-row items-center bg-slate-950 mx-0 mt-0 pt-7">
+	  <div class="mx-20 grid [grid-template-columns:1fr]">
+      <div class="[grid-column:1] [grid-row:1] relative group overflow-hidden rounded-3xl mb-7 mx-auto w-fit rounded-4xl duration-500 ease-in-out hover:scale-110">
+        
+        <img 
+          src="https://asafesseidon.github.io/Asafesseidon-s_Website/Files/Images/anne-sophie-benoit-JaNtL4uGvG8-unsplash.jpg" 
+          alt="Imagem" 
+          class="rounded-4xl duration-300 ease-in-out hover:scale-110 object-cover aspect-video w-[65vw] h-[35vw] block border-2 border-blue-700 "
+        />
+
+        <div class="absolute inset-0 pointer-events-none z-10 
+                    bg-[linear-gradient(rgba(160,130,255,0)_50%,rgba(0,0,200,0.4)_50%)] 
+                    bg-[length:100%_8px] opacity-60 ">
+        </div>
+      </div>
+      
+      <div class="[grid-column:1] [grid-row:1] place-self-center pointer-events-none z-20">
+        <h1 use:hackerEffect class="text-2xl md:text-7xl text-blue-900 drop-shadow-lg pointer-events-auto">
+          ASAFESSEIDON-SAPPHIRE
+        </h1>
+      </div>
+    </div>
+
+  
+	 <div class="flex px-15 relative w-full overflow-visible gap-2 justify-center">
+      <CardSv 
+      cardImg ="https://asafesseidon.github.io/Asafesseidon-s_Website/Files/Images/s-alb-xYWMPwhQcDM-unsplash.jpg"
+      cardRotation="-rotate-6"
+      cardZ="z-[2]"
+      />
+
+      <CardSv 
+      cardImg ="https://asafesseidon.github.io/Asafesseidon-s_Website/Files/Images/WhatsApp%20Image%202024-05-13%20at%2023.39.08.jpeg"
+      cardRotation="-rotate-3"
+      cardZ="z-[1]"
+      />
+
+      <CardSv 
+      cardImg ="https://asafesseidon.github.io/Asafesseidon-s_Website/Files/Images/luca-bravo-WeFDiEDModQ-unsplash.jpg"
+      cardRotation=""
+      cardZ="z-[2]"
+      />
+
+      <CardSv 
+      cardImg ="https://asafesseidon.github.io/Asafesseidon-s_Website/Files/Images/WhatsApp%20Image%202024-05-13%20at%2023.39.09.jpeg"
+      cardRotation="rotate-3"
+      cardZ="z-[1]"
+      />
+
+      <CardSv cardImg ="https://asafesseidon.github.io/Asafesseidon-s_Website/Files/Images/louis-gaudiau-jloWf465qgU-unsplash.jpg"
+      cardRotation="rotate-6"
+      cardZ="z-[2]"
+      />
 	 
-  
-	 <div class="flex mx-6">
-	 
-	   
-	  <img class="rounded-2xl cardImgs object-cover -rotate-6 duration-300 ease-in-out z-2 hover:scale-120 hover:rotate-0 my-6 hover:z-3" src="https://asafesseidon.github.io/Asafesseidon-s_Website/Files/Images/s-alb-xYWMPwhQcDM-unsplash.jpg" alt="" />
-			
-  
-	  <img class="rounded-2xl cardImgs object-cover -rotate-3 duration-300 ease-in-out z-1 hover:scale-120 hover:rotate-0 my-6 hover:z-3" src="https://asafesseidon.github.io/Asafesseidon-s_Website/Files/Images/WhatsApp%20Image%202024-05-13%20at%2023.39.08.jpeg" alt="" />
-			   
-  
-	  <img class="rounded-2xl cardImgs object-cover duration-300 ease-in-out z-2 hover:scale-120 rotate-0 hover:rotate-0 my-6 hover:z-3" src="https://asafesseidon.github.io/Asafesseidon-s_Website/Files/Images/luca-bravo-WeFDiEDModQ-unsplash.jpg" alt="" />
-			 
-  
-	  <img class="rounded-2xl cardImgs object-cover rotate-3 duration-300 ease-in-out z-1 hover:scale-120 hover:rotate-0 my-6 hover:z-3" src="https://asafesseidon.github.io/Asafesseidon-s_Website/Files/Images/WhatsApp%20Image%202024-05-13%20at%2023.39.09.jpeg" alt="" />
-			   
-  
-	  <img class="rounded-2xl cardImgs object-cover rotate-6 duration-300 ease-in-out z-2 hover:scale-120 hover:rotate-0 my-6 hover:z-3" src="https://asafesseidon.github.io/Asafesseidon-s_Website/Files/Images/louis-gaudiau-jloWf465qgU-unsplash.jpg" alt="" />
-			  
 	 </div>
 	 <div class="mx-2">
-     <h1 class="text-white items-center justify-center text-center text-4xl my-10 p-5 bgMidnightBlue rounded-3xl " id="projects">My Projects</h1>
+     <h1 use:hackerEffect class="text-white items-center justify-center text-center text-4xl my-10 p-5 bgMidnightBlue rounded-3xl pointer-events-auto" id="projects" >My Projects</h1>
 
      <div class="flex flex-row">
         <div class="flex-row items-center justify-center mx-2.5">
@@ -135,3 +212,5 @@
   
    </div>
 </div>
+{/if}
+  
