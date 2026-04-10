@@ -27,7 +27,7 @@ router.get('/', async function(req, res) {
 router.get('/:id', async function(req, res) {
   try{
     const { id } = req.params;
-    const result = await pool.query('SELECT * FROM Projects WHERE id = $1 ORDER BY Projects.id', [id]);
+    const result = await pool.query("SELECT projects.id, projects.project_name, projects.display_name, projects.owner, projects.link, projects.creation_date, projects.description, COALESCE( jsonb_agg(DISTINCT jsonb_build_object( 'name', languages.language_name, 'type', languages.type, 'bytes', projectslanguages.bytes )) FILTER (WHERE languages.id IS NOT NULL), '[]') AS languages, COALESCE( jsonb_agg(DISTINCT jsonb_build_object('name', collaborators.user_name, 'avatar', collaborators.user_avatar, 'link', collaborators.user_link)) FILTER (WHERE collaborators.id IS NOT NULL), '[]')  AS collaborators FROM Projects LEFT JOIN projectslanguages ON projects.id = projectslanguages.project_id LEFT JOIN Languages ON languages.id = projectslanguages.language_id  LEFT JOIN projectscollaborators ON projects.id = projectscollaborators.project_id LEFT JOIN Collaborators ON collaborators.id = projectscollaborators.collaborator_id GROUP BY projects.id WHERE id = $1", [id]);
     res.json({
       success: true,
       data: result.rows

@@ -7,7 +7,7 @@ const github = require('./githubConnection.cjs')
 /* GET Languages listing. */
 router.get('/', async function(req, res) {
   try{
-    const result = await pool.query('SELECT * FROM Languages ORDER BY Languages.id');
+    const result = await pool.query('SELECT language_name, bytes, type FROM projectslanguages JOIN languages ON projectslanguages.language_id = languages.id ORDER BY languages.id;');
     res.json({
       success: true,
       data: result.rows
@@ -27,7 +27,7 @@ router.get('/', async function(req, res) {
 router.get('/:id', async function(req, res) {
   try{
     const { id } = req.params;
-    const result = await pool.query('SELECT * FROM Languages WHERE id = $1', [id]);
+    const result = await pool.query('SELECT language_name, bytes, type FROM projectslanguages JOIN languages ON projectslanguages.language_id = languages.id WHERE languages.id = $1', [id]);
     
     if (result.rows.length === 0) {
       return res.status(404).json({

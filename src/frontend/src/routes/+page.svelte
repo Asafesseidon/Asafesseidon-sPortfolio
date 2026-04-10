@@ -2,8 +2,10 @@
 
   import Nav from './Components/Nav.svelte';
   import ProjectSv from './Components/project.svelte';
+  import Donut from './Components/donut.svelte';
   import CardSv from './Components/cards.svelte';
   import api from '../lib/api.ts';
+
   import { onMount } from 'svelte';
   
   type Language = {
@@ -16,6 +18,7 @@
     name: string;
     link: string;
     avatar: string;
+    collab?: number;
   }
 
   type Project = {
@@ -42,12 +45,22 @@
       console.log('calling')
       projects = res.data.data;
       console.log(projects)
+      try {
+        const res = await api.get('/contributor/collaboration/');
+        contributorDistribution = res.data.data;
+      } catch (e: any) {
+        error = e.response?.data?.message || 'Erro ao carregar colaboradores';
+
+      } finally {
+        loading = false;
+      }
     } catch (e: any) {
-      error = e.response?.data?.message || 'Erro ao carregar turmas';
+      error = e.response?.data?.message || 'Erro ao carregar colaboradores';
 
     } finally {
       loading = false;
     }
+
   });
 
   function hackerEffect(node: HTMLElement) {
@@ -209,7 +222,9 @@
      <div>
        <h2 class="text-white">Fun Analytics</h2>
      </div>
-  
+
+     <Donut {donutWidth=450, donutHeight=450, donutMargin=45, data=contributorDistribution}/>
+
    </div>
 </div>
 {/if}

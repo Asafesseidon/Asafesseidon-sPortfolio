@@ -2,12 +2,13 @@ var express = require('express');
 var router = express.Router();
 const pool = require('../db/config.cjs');
 const axios = require('axios');
-const github = require('./githubConnection.cjs')
+const github = require('./githubConnection.cjs');
+const { list } = require('postcss');
 
 /* GET Collaborators listing. */
 router.get('/', async function(req, res) {
   try{
-    const result = await pool.query('SELECT * FROM Collaborators ORDER BY Collaborators.id');
+    const result = await pool.query('SELECT user_name AS name, user_link AS link, user_avatar AS avatar FROM Collaborators ORDER BY Collaborators.id');
     res.json({
       success: true,
       data: result.rows
@@ -27,7 +28,7 @@ router.get('/', async function(req, res) {
 router.get('/:id', async function(req, res) {
   try{
     const { id } = req.params;
-    const result = await pool.query('SELECT * FROM Collaborators WHERE id = $1 ORDER BY Collaborators.id', [id]);
+    const result = await pool.query('SELECT user_name AS name, user_link AS link, user_avatar AS avatar FROM Collaborators WHERE id = $1', [id]);
     res.json({
       success: true,
       data: result.rows
@@ -35,6 +36,40 @@ router.get('/:id', async function(req, res) {
   }
    catch (error) {
     console.error('Erro ao buscar o colaborador:', error);
+    // http status 500 - Internal Server Error
+    res.status(500).json({
+      success: false,
+      message: 'Erro interno do servidor'
+    });
+  }
+});
+
+/* GET Ammount of projects collaborated by each collaborator by id. */
+router.get('/collaborations/', async function(req, res) {
+  try{
+    const result = await pool.query('SELECT user_name AS name, user_link AS link, user_avatar AS avatar FROM projectscollaborators JOIN collaborators ON projectscollaborators.collaborator_id = collaborators.id ORDER BY collaborators.id;');
+
+    listOfNames=[];
+    ammountOfCollaborations = {};
+
+    for(const row of result.rows){
+      if(ammountOfCollaborations[row.user_name]){
+        ammountOfCollaborations[row.user_name] = ammountOfCollaborations[row.user_name]+1
+      }
+      else{
+        ammountOfCollaborations[row.user_name] = 1
+        }
+    }
+    for(const row in result.rows){
+      row.collab = ammountOfCollaborations[row.user_name]
+    }
+    res.json({
+      success: true,
+      data: result.rows
+    });
+  }
+   catch (error) {
+    console.error('Erro ao buscar os colaboradores:', error);
     // http status 500 - Internal Server Error
     res.status(500).json({
       success: false,
