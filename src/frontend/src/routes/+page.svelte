@@ -37,6 +37,7 @@
   let loading = true;
   let error = '';
   const letters ="ABCDEFGHIJKLMNOPQRSTUVWXYZ-"
+  let contributorDistribution: Collaborator[] = [];
 
   onMount(async () => {
     try {
@@ -46,8 +47,12 @@
       projects = res.data.data;
       console.log(projects)
       try {
-        const res = await api.get('/contributor/collaboration/');
-        contributorDistribution = res.data.data;
+        const res = await api.get('/collaborators/collaborations/');
+        const myName = "Asafesseidon";
+
+        contributorDistribution = res.data.data.filter(user => user.name !== myName);
+
+        console.log(contributorDistribution)
       } catch (e: any) {
         error = e.response?.data?.message || 'Erro ao carregar colaboradores';
 
@@ -102,9 +107,7 @@
 
 
 </script>
-
   <style>
-
     .midnightBlue{
      color: #2D386C;
     }
@@ -222,9 +225,11 @@
      <div>
        <h2 class="text-white">Fun Analytics</h2>
      </div>
+     <div class=" mx-auto">
+       <Donut donutWidth={500} donutHeight={500} donutMargin={45} data={contributorDistribution}/>
 
-     <Donut {donutWidth=450, donutHeight=450, donutMargin=45, data=contributorDistribution}/>
-
+     </div>
+    
    </div>
 </div>
 {/if}

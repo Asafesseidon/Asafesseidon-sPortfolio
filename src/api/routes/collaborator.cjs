@@ -5,6 +5,44 @@ const axios = require('axios');
 const github = require('./githubConnection.cjs');
 const { list } = require('postcss');
 
+/* GET Ammount of projects collaborated by each collaborator by id. */
+router.get('/collaborations/', async function(req, res) {
+  try{
+    const result = await pool.query('SELECT user_name AS name, user_link AS link, user_avatar AS avatar FROM projectscollaborators JOIN collaborators ON projectscollaborators.collaborator_id = collaborators.id ORDER BY collaborators.id;');
+
+    const collaboratorsMap = {};
+
+    for (const row of result.rows) {
+      if (collaboratorsMap[row.name]) {
+        collaboratorsMap[row.name].collab += 1;
+      } else {
+        collaboratorsMap[row.name] = {
+          name: row.name,
+          link: row.link,
+          avatar: row.avatar,
+          collab: 1
+        };
+      }
+    }
+
+    // convert object → array
+    const unique = Object.values(collaboratorsMap);
+
+    res.json({
+      success: true,
+      data: unique
+    });
+  }
+   catch (error) {
+    console.error('Erro ao buscar os colaboradores:', error);
+    // http status 500 - Internal Server Error
+    res.status(500).json({
+      success: false,
+      message: 'Erro interno do servidor'
+    });
+  }
+});
+
 /* GET Collaborators listing. */
 router.get('/', async function(req, res) {
   try{
@@ -36,40 +74,6 @@ router.get('/:id', async function(req, res) {
   }
    catch (error) {
     console.error('Erro ao buscar o colaborador:', error);
-    // http status 500 - Internal Server Error
-    res.status(500).json({
-      success: false,
-      message: 'Erro interno do servidor'
-    });
-  }
-});
-
-/* GET Ammount of projects collaborated by each collaborator by id. */
-router.get('/collaborations/', async function(req, res) {
-  try{
-    const result = await pool.query('SELECT user_name AS name, user_link AS link, user_avatar AS avatar FROM projectscollaborators JOIN collaborators ON projectscollaborators.collaborator_id = collaborators.id ORDER BY collaborators.id;');
-
-    listOfNames=[];
-    ammountOfCollaborations = {};
-
-    for(const row of result.rows){
-      if(ammountOfCollaborations[row.user_name]){
-        ammountOfCollaborations[row.user_name] = ammountOfCollaborations[row.user_name]+1
-      }
-      else{
-        ammountOfCollaborations[row.user_name] = 1
-        }
-    }
-    for(const row in result.rows){
-      row.collab = ammountOfCollaborations[row.user_name]
-    }
-    res.json({
-      success: true,
-      data: result.rows
-    });
-  }
-   catch (error) {
-    console.error('Erro ao buscar os colaboradores:', error);
     // http status 500 - Internal Server Error
     res.status(500).json({
       success: false,
@@ -124,6 +128,7 @@ router.post('/', async function(req, res) {
         else {
             contributorId = existingContributor.rows[0].id;
         }
+        
         await pool.query('INSERT INTO ProjectsCollaborators(project_id, collaborator_id) Values($1, $2) ON CONFLICT DO NOTHING RETURNING id, project_id, collaborator_id ', [projectId, contributorId])
       }
         
