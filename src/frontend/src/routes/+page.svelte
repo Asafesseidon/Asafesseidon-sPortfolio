@@ -1,8 +1,10 @@
 <script lang="ts">
 
   import Nav from './Components/Nav.svelte';
+  import Footer from './Components/footer.svelte'
   import ProjectSv from './Components/project.svelte';
   import Donut from './Components/donut.svelte';
+  import Bar from './Components/bar.svelte'
   import CardSv from './Components/cards.svelte';
   import api from '../lib/api.ts';
 
@@ -51,7 +53,6 @@
         const myName = "Asafesseidon";
 
         contributorDistribution = res.data.data.filter(user => user.name !== myName);
-
         console.log(contributorDistribution)
       } catch (e: any) {
         error = e.response?.data?.message || 'Erro ao carregar colaboradores';
@@ -126,16 +127,15 @@
   <title>Asafesseidon's Portfolio</title>
 </svelte:head>
 
+
 {#if loading}
+<Nav/>
   <div class="justify-center flex-row items-center bg-slate-950 h-screen mx-0 mt-0 pt-7">
 	  <div class="mx-20 grid [grid-template-columns:1fr]">
       <div class="[grid-column:1] [grid-row:1] relative group overflow-hidden rounded-3xl mb-7 mx-auto w-fit rounded-4xl duration-500 ease-in-out hover:scale-110">
         
-        <img 
-          src="https://asafesseidon.github.io/Asafesseidon-s_Website/Files/Images/anne-sophie-benoit-JaNtL4uGvG8-unsplash.jpg" 
-          alt="Imagem" 
-          class="rounded-4xl duration-300 ease-in-out hover:scale-110 object-cover aspect-video w-[70vw] h-[40-vw] block border-4 border-blue-700 "
-        />
+        <div class="rounded-4xl duration-300 ease-in-out hover:scale-110 object-cover aspect-video w-[70vw] h-[40-vw] block border-4 border-blue-700 "></div>
+        
 
         <div class="absolute inset-0 pointer-events-none z-10 
                     bg-[linear-gradient(rgba(160,130,255,0)_50%,rgba(0,0,200,0.4)_50%)] 
@@ -148,9 +148,12 @@
           LOADING PORTOFOLIO
         </h1>
       </div>
+      
     </div>
   </div>
+
 {:else}
+<Nav/>
   <div class="justify-center flex-row items-center bg-slate-950 mx-0 mt-0 pt-7">
 	  <div class="mx-20 grid [grid-template-columns:1fr]">
       <div class="[grid-column:1] [grid-row:1] relative group overflow-hidden rounded-3xl mb-7 mx-auto w-fit rounded-4xl duration-500 ease-in-out hover:scale-110">
@@ -222,15 +225,22 @@
       </div>
 	 
   
-     <div>
-       <h2 class="text-white">Fun Analytics</h2>
-     </div>
-     <div class=" mx-auto">
-       <Donut donutWidth={500} donutHeight={500} donutMargin={45} data={contributorDistribution}/>
+     <div class="flex flex-row">
+        <div class=" flex flex-col items-center justify-center mx-2.5">
 
+          <h2 class="text-white text-center my-5">Fun Analytics</h2>
+
+          <div class=" flex flex-col mt-2">
+            <p class="text-white text-center">Distribuição de maiores colaboradores</p>
+
+            <Donut donutWidth={500} donutHeight={500} donutMargin={45} data={contributorDistribution} valueKey={'collab'} labelKey={'name'}/>
+
+
+            <Bar data={contributorDistribution}/>
+          </div>
+        </div>
      </div>
-    
    </div>
 </div>
 {/if}
-  
+<Footer/>
