@@ -43,9 +43,7 @@
 
   onMount(async () => {
     try {
-      console.log('Hydration')
       const res = await api.get('/projects');
-      console.log('calling')
       projects = res.data.data;
       console.log(projects)
       try {
@@ -144,7 +142,7 @@
       </div>
       
       <div class="[grid-column:1] [grid-row:1] place-self-center pointer-events-none z-20">
-        <h1 use:hackerEffect class="text-2xl md:text-7xl text-blue-900 drop-shadow-lg pointer-events-auto">
+        <h1 use:hackerEffect class="text-2xl md:text-7xl text-blue-900 drop-shadow-lg pointer-events-auto pixel-perfect">
           LOADING PORTOFOLIO
         </h1>
       </div>
@@ -156,7 +154,7 @@
 <Nav/>
   <div class="justify-center flex-row items-center bg-slate-950 mx-0 mt-0 pt-7">
 	  <div class="mx-20 grid [grid-template-columns:1fr]">
-      <div class="[grid-column:1] [grid-row:1] relative group overflow-hidden rounded-3xl mb-7 mx-auto w-fit rounded-4xl duration-500 ease-in-out hover:scale-110">
+      <div class="[grid-column:1] [grid-row:1] relative group overflow-hidden rounded-3xl mb-3 mx-auto w-fit rounded-2xl duration-500 ease-in-out hover:scale-110">
         
         <img 
           src="https://asafesseidon.github.io/Asafesseidon-s_Website/Files/Images/anne-sophie-benoit-JaNtL4uGvG8-unsplash.jpg" 
@@ -171,14 +169,14 @@
       </div>
       
       <div class="[grid-column:1] [grid-row:1] place-self-center pointer-events-none z-20">
-        <h1 use:hackerEffect class="text-2xl md:text-7xl text-blue-900 drop-shadow-lg pointer-events-auto">
+        <h1 use:hackerEffect class="text-2xl md:text-7xl text-blue-900 drop-shadow-lg pointer-events-auto pixel-perfect">
           ASAFESSEIDON-SAPPHIRE
         </h1>
       </div>
     </div>
 
   
-	 <div class="flex px-15 relative w-full overflow-visible gap-2 justify-center">
+	 <div class="flex px-15 relative w-full my-0 overflow-visible gap-2 justify-center">
       <CardSv 
       cardImg ="https://asafesseidon.github.io/Asafesseidon-s_Website/Files/Images/s-alb-xYWMPwhQcDM-unsplash.jpg"
       cardRotation="-rotate-6"
@@ -209,12 +207,38 @@
       />
 	 
 	 </div>
+
+  <div>
+    <h1 use:hackerEffect class="text-white items-center justify-center text-center text-4xl my-0 p-5 bgMidnightBlue rounded-3xl pointer-events-auto" id="analytics" >Fun Analytics</h1>
+      <div class="flex flex-row">
+      
+
+        <div class=" flex flex-col items-center justify-center mx-2.5">
+        
+          <div class=" flex flex-col mt-2 mb-0">
+            <p class="text-white text-center ">Distribuição de colaboradores mais frequentes</p>
+
+            <Donut donutWidth={500} donutHeight={500} donutMargin={45} data={contributorDistribution} valueKey={'collab'} labelKey={'name'}/>
+
+            <Bar data={contributorDistribution}/>
+          </div>
+
+          <div class=" flex flex-col mt-2 mb-0">
+            <p class="text-white text-center ">Projetos totais</p>
+
+            <Donut donutWidth={500} donutHeight={500} donutMargin={45} data={contributorDistribution} valueKey={'collab'} labelKey={'name'}/>
+
+            <Bar data={contributorDistribution}/>
+          </div>
+        </div>
+     </div>
+    </div>
 	 <div class="mx-2">
-     <h1 use:hackerEffect class="text-white items-center justify-center text-center text-4xl my-10 p-5 bgMidnightBlue rounded-3xl pointer-events-auto" id="projects" >My Projects</h1>
+     <h1 use:hackerEffect class="text-white items-center justify-center text-center text-4xl my-0 p-5 bgMidnightBlue rounded-3xl pointer-events-auto" id="projects" >My Projects</h1>
 
      <div class="flex flex-row">
         <div class="flex-row items-center justify-center mx-2.5">
-          <div class="flex flex-col items-center bg-white border border-gray-200 rounded-lg shadow-sm   dark:border-gray-700 dark:bg-gray-900">
+          <div class="flex flex-col items-center bg-white border border-gray-200 rounded-lg shadow-sm ml-20 mr-40  dark:border-gray-700 dark:bg-gray-900">
             <h2 class="text-white items-center justify-center text-center text-4xl my-3">Projects from Github</h2>
 
             {#each projects as project}
@@ -225,21 +249,7 @@
       </div>
 	 
   
-     <div class="flex flex-row">
-        <div class=" flex flex-col items-center justify-center mx-2.5">
-
-          <h2 class="text-white text-center my-5">Fun Analytics</h2>
-
-          <div class=" flex flex-col mt-2">
-            <p class="text-white text-center">Distribuição de maiores colaboradores</p>
-
-            <Donut donutWidth={500} donutHeight={500} donutMargin={45} data={contributorDistribution} valueKey={'collab'} labelKey={'name'}/>
-
-
-            <Bar data={contributorDistribution}/>
-          </div>
-        </div>
-     </div>
+    
    </div>
 </div>
 {/if}

@@ -1,1 +1,29 @@
 @import "tailwindcss";
+
+
+@theme {
+  /* This automatically creates the 'font-pixel' utility class */
+  --font-pixel: "Departure Mono", monospace;
+}
+
+@font-face {
+  font-family: 'Departure Mono';
+  src: url('/DepartureMono-Regular.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+.pixel-perfect {
+  font-smooth: never;
+  -webkit-font-smoothing: none;
+  -moz-osx-font-smoothing: none;
+  text-rendering: optimizeSpeed;
+}
+
+body {
+  font-family: var(--font-pixel); /* v4 style variable */
+  font-smooth: never;
+  -webkit-font-smoothing: none;
+  -moz-osx-font-smoothing: none;
+}

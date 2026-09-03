@@ -1,6 +1,5 @@
 <script lang="ts">
       
-
       export let link= "";
       export let project_name= "";
       export let display_name= "";
@@ -69,7 +68,7 @@
                    <p class="mb-3 font-normal text-gray-700 dark:text-gray-400 w-full">Created at {creation_date}</p>
                   <p class="mb-3 font-normal text-gray-700 dark:text-gray-400 w-full">By {owner}</p>
 
-                  <div class="flex w-full h-3 overflow-hidden rounded-full bg-gray-200">
+                  <div class="flex w-1/2 min-w-[50%] flex-shrink-0 h-2 overflow-hidden rounded-full bg-gray-200">
                         {#each languages as lang}
                               {@const percentage = (lang.bytes / totalBytes) * 100}   
 
@@ -88,6 +87,7 @@
 
                   <div class="flex flex-row py-2.5">
                         <h3 class="font-medium text-heading text-gray-300">Collaborators</h3>
+                        
                         {#each collaborators as collaborator}
                                 
                               <Button class="bg-brand border border-transparent  hover:bg-brand-strong shadow-xs font-medium leading-5 rounded-base text-sm px-4 py-2.5">
